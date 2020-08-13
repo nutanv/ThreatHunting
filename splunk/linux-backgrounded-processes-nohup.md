@@ -1,6 +1,6 @@
 # Interesting auditd logs processes which are backgrounded. MITRE - Exfil
 
-## Purpose: Identify suspiciously backgrounded proccess. MITRE - Persistance
+## Purpose: Identify suspiciously backgrounded proccess (nohup). MITRE - Persistance
 
 ## Data Required: Auditd Syscall logs
 
