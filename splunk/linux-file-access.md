@@ -23,6 +23,7 @@ Malicious actors tend to go after files to which they do not have access. To do 
 They might also perform tricks to relax restricted permission using exiting priviledged process on the box. Infact the whole operation could then be automated using 
 scripts or programs. 
 The query above list all user access attempts from a terminal (Use Pid PPid chaining to accertain automation scripts). 
+Intersting ones would be patterns of vim, su, sudo, ls, lsof, bash. Note there auid, uid, suid etc, if any one of them is unknown, that could lo-fi indicator of an orphan process.
 
 ## Other Notes: 
 T1567
