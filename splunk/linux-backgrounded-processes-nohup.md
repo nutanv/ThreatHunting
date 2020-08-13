@@ -44,9 +44,12 @@ The result set here shows some suspicous proccess which were backgrounded.
 
 ## Other Notes: 
 (Similar) https://attack.mitre.org/techniques/T1053/003/
+
 Will contribute nohup very soon.
 
 ## More Info: 
 https://redcanary.com/blog/rocke-cryptominer/
+
 https://www.f5.com/labs/articles/threat-intelligence/new-jenkins-campaign-hides-malware--kills-competing-crypto-miner
+
 https://medium.com/@smurf3r5/reverse-shells-d1c5e3430bc8
