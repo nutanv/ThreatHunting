@@ -24,7 +24,7 @@ index=auditd*
 | stats count by syscall FullCMD cwd success exit items auid uid gid euid suid fsuid tty comm exe host 
 | sort - count
 
-//Results snapshot
+Results snapshot
 syscall	FullCMD	cwd	success	exit	items	auid	uid	gid	euid	suid	fsuid	tty	comm	exe	host	count
 execve	nohup bash -c sudo systemctl start fake-odo 	/root	no	ENOENT(No such file or directory)	1	test_user1	root	root	root	root	root	(none)	nohup	/usr/bin/nohup	dart-testhost.nodes.ad1.r1	24
 execve	nohup python3 ./agent/beet_agent.py 	/home/opc	yes	0	2	test_user2	opc	opc	opc	opc	opc	(none)	nohup	/usr/bin/nohup	sea-dev-1-ad1-h	12
