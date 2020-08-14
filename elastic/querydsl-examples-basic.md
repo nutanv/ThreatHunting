@@ -1,5 +1,34 @@
-Slack dsl
+### Wildcarded Terms query
+this is simply not possible is elasticsearch, use query string instead. If you have to load values from a file, the use painless 
+scripts as a stored file.
 
+```
+Wildcard Terms
+
+/* This query is working*/
+GET /syslog_test2/_search/?format=yaml&size=1
+{
+  "query": 
+  {
+    "bool": 
+    {
+      "must": 
+      [
+        {"query_string": {
+          "default_field": "host",
+          "query": "host:*king* OR host:*local*"
+        }}
+      ],
+      "must_not": 
+      [
+        {"match_phrase": {"host": "kingjulian"}}
+      ],
+      "filter": {"range": {"@timestamp": {"gte": "now-7d","lte": "now"}}}
+    }
+  },
+  "_source": ["host", "ident.keyword", "message.keyword"]
+}
+```
 
 /* This query is working*/
 GET /syslog_test2/_search/?format=yaml&size=1
