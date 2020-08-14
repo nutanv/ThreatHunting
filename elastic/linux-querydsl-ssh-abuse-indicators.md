@@ -1,4 +1,4 @@
-# SSH Abuse Detection Example
+# SSH Hijacking TH Example
 In linux systems, attackers often use ssh to move between machines or ssh to localhost with an elevated account to either to gain access or escalate priviledges.
 The query leverages indicators extracted from an SSH Hijack tests done b/w two machines to list potential abuse. 
 We are looking for - 
@@ -159,5 +159,80 @@ GET _scripts/LM-002A-Whitelist
             return true;
       """
   }
+}
+```
+
+
+# SSH Account mismatch
+
+## Query 1 - Showing auid vs uid mismatch. 
+```
+
+GET _search
+{
+  "_source": ["PROCTITLE_b_proctitle", "b_auid", "b_euid", "b_msg_lport","m_host","h_msg","m_eventTs"], 
+  "query" : 
+  {
+    "bool" : 
+    {
+      "filter": 
+      [
+        {"range": {"m_eventTs": {"from": "now-1h","to": "now"}}},
+        {"wildcard": {"_index": {"wildcard": "auditd*","boost": 1}}},
+        {"exists": {"field": "h_type"}},
+        {"match_phrase": {"h_type.keyword": "SYSCALL"}},
+        {"match_phrase": {"b_exe.keyword": "/usr/bin/ssh"}},
+        {"exists": {"field": "PROCTITLE_b_proctitle"}},
+        {"match_phrase": {"m_sourceType": "parsed.auditd"}}
+      ], 
+      "must": 
+      [
+        {
+          "script": 
+          {
+            "script": "doc['b_auid.keyword'].value != doc['b_euid.keyword'].value"
+          }
+        }
+      ],
+      "should": 
+      [
+        {"match_phrase": {"m_host": "bastion"}},
+        {"match_phrase": {"m_host": "selinux\\-demo"}}
+      ],"minimum_should_match": 1, 
+      "must_not": 
+      [
+        {"term": {"b_uid": {"value": "root"}}}
+      ]
+    }
+  }
+}
+```
+## Query 2 - Showing auid vs command user mismatch. 
+note the "script" section where we are checking only if user is NOT using its own auid.
+```
+{
+    "_source": ["m_host","b_auid","CWD_b_cwd","h_msg","PROCTITLE_b_proctitle","b_syscall","b_uid","m_eventTs"],
+    "query": {
+        "bool": {
+            "must": 
+            [
+                {"range": {"m_eventTs": {"gte": "now-30m","lte": "now"}}},
+                {"wildcard": {"_index": {"value": "auditd*"}}},
+                {"exists": {"field": "b_syscall"}},
+                {"term": {"b_syscall": {"value": "connect"}}},
+                {"term": {"b_comm": {"value": "ssh"}}}
+            ],
+            "must_not": 
+            [
+                {"term": {"b_tty": {"value": "none"}}},
+                {
+                    "script": 
+                    {
+                        "script": "doc['PROCTITLE_b_proctitle.keyword'].value.toLowerCase().contains(doc['b_auid.keyword'].value.toLowerCase())"
+                    }
+                }
+            ]
+        }
+    }
 }
 ```
