@@ -1,3 +1,24 @@
+### REGEXP
+This query demonstrates Regular Expressions in DSL without Painless 
+```
+GET auditd_syscall/_search
+{
+  "size": 2,
+  "_source": ["header.msg","body.proctitle"],
+  "query": {"bool": {
+                    "must": 
+                            [ 
+                              {"match_phrase": {"header.type": "PROCTITLE"}},
+                              {"regexp": {"body.proctitle": "[0-9].*"}}
+                            ],
+                    "filter": 
+                              {
+                                "range": {"@timestamp": {"gte": "now-1y", "lte": "now"}}
+                              }
+                    }
+            }
+}
+```
 ### Wildcarded Terms query
 this is simply not possible is elasticsearch, use query string instead. If you have to load values from a file, the use painless 
 scripts as a stored file.
